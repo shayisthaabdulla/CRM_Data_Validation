@@ -1,19 +1,19 @@
-# Retail Sales Analysis SQL Project
+# CRM Data Validation (SQL Project)
 
 ## Project Overview
 
-**Project Title**: Retail Sales Analysis  
+**Project Title**: CRM Data Validation 
 **Level**: Beginner  
-**Database**: `p1_retail_db`
+**Database**: `P1_CRM_Data_Validation`
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+This project simulates a Dynamics 365 CRM environment where customer and agent data is validated using SQL. It showcases your ability to identify data quality issues (nulls, mismatches, duplicates) and perform cleanup recommendations for CRM optimization.
 
 ## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+1. **Simulate CRM order and agent datasets using PostgreSQL.
+2. **Write SQL queries to identify null values, mismatches, duplicates, and invalid entries.
+3. **EAutomate common data validation routines.
+4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the data.
 
 ## Project Structure
 
