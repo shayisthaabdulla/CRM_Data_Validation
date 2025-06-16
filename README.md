@@ -21,9 +21,9 @@ This project simulates a CRM (Customer Relationship Management) system inspired 
 
 - **Database Creation**: The project begins by setting up a PostgreSQL environment with a database named 'crm_data_validation' that mimics a basic CRM system.
 - **Table Creation**: Three core tables are created to simulate lead generation, account management, and order tracking within a CRM platform:
-- **crm_leads**: Stores initial lead information, including name, contact details, source, status, and created date.
-- **crm_accounts**: Represents customer accounts converted from leads, capturing industry, activity status, and account creation date.
-- **crm_orders**: Tracks orders placed by accounts, storing order status, value, and creation date.
+   - **crm_leads**: Stores initial lead information, including name, contact details, source, status, and created date.
+   - **crm_accounts**: Represents customer accounts converted from leads, capturing industry, activity status, and account creation date.
+   - **crm_orders**: Tracks orders placed by accounts, storing order status, value, and creation date.
 - **Sample Data Insertion**: Each table is populated with realistic sample data, including intentional anomalies (e.g., null values, missing links) to reflect common CRM data issues.
 
 ```sql
