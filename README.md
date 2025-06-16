@@ -78,7 +78,8 @@ VALUES
 (3, NULL, 1500.00, '2024-11-25');
 ```
 
-### 2. Data Cleaning & Validation Queries: This section outlines the key SQL queries used to validate and clean data across the CRM system to ensure reliability and consistency.
+### 2. Data Cleaning & Validation Queries: 
+This section outlines the key SQL queries used to validate and clean data across the CRM system to ensure reliability and consistency.
 
 - **Lead Completeness Check**: Identify leads with missing email, phone number, or status to flag incomplete records.
 - **Account-Link Consistency**: Detect crm_accounts entries linked to nonexistent lead_ids in the crm_leads table to ensure foreign key integrity.
