@@ -1,190 +1,217 @@
-# Retail Sales Analysis SQL Project
+# CRM Data Validation (SQL Project)
 
 ## Project Overview
 
-**Project Title**: Retail Sales Analysis  
+**Project Title**: CRM Data Validation
 **Level**: Beginner  
-**Database**: `p1_retail_db`
+**Database**: `CRM_Data_Validation`
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+This project simulates a CRM (Customer Relationship Management) system inspired by Dynamics 365, designed to showcase SQL skills commonly used by Business Analysts. It focuses on data validation, cleaning, and insight generation from core CRM entities. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
 
 ## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
-
+1. **Set up a CRM database**: Create and populate a CRM database with sample data for leads, accounts, and orders.
+2. **Data Cleaning**: Identify and handle missing values, nulls, duplicates, and mismatched relationships.
+3. **Exploratory Data Analysis (EDA)**: Use SQL to explore trends in lead sources, account activity, and order performance.
+4. **Business Insights**:  Answer real-world business questions related to lead conversion, inactive accounts, and revenue trends.
+   
 ## Project Structure
 
 ### 1. Database Setup
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+- **Database Creation**: The project begins by setting up a PostgreSQL environment with a database named 'crm_data_validation' that mimics a basic CRM system.
+- **Table Creation**: Three core tables are created to simulate lead generation, account management, and order tracking within a CRM platform:
+- **crm_leads**: Stores initial lead information, including name, contact details, source, status, and created date.
+- **crm_accounts**: Represents customer accounts converted from leads, capturing industry, activity status, and account creation date.
+- **crm_orders**: Tracks orders placed by accounts, storing order status, value, and creation date.
+- **Sample Data Insertion**: Each table is populated with realistic sample data, including intentional anomalies (e.g., null values, missing links) to reflect common CRM data issues.
 
 ```sql
-CREATE DATABASE p1_retail_db;
+CREATE DATABASE crm_data_validation;
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
+CREATE TABLE crm_leads (
+    lead_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    source VARCHAR(50),
+    status VARCHAR(20),
+    created_date DATE
 );
+
+INSERT INTO crm_leads (first_name, last_name, email, phone, source, status, created_date) VALUES
+('Aisha', 'Khan', 'aisha.khan@example.com', '123-456-7890', 'Web Form', 'New', '2024-10-01'),
+('John', 'Doe', 'john.doe@example.com', NULL, 'Referral', 'Contacted', '2024-10-05'),
+('Fatima', 'Ali', '', '321-654-0987', 'Campaign', 'Qualified', '2024-10-10'),
+('Raj', 'Patel', 'raj.patel@example.com', '999-999-9999', 'Web Form', NULL, '2024-10-15');
+
+CREATE TABLE crm_accounts (
+    account_id SERIAL PRIMARY KEY,
+    lead_id INT,
+    account_name VARCHAR(100),
+    industry VARCHAR(50),
+    is_active BOOLEAN,
+    account_created DATE
+);
+
+INSERT INTO crm_accounts (lead_id, account_name, industry, is_active, account_created) VALUES
+(1, 'Khan Tech', 'IT Services', TRUE, '2024-10-20'),
+(2, 'Doe Logistics', 'Transportation', FALSE, '2024-10-22'),
+(4, 'Patel Media', NULL, TRUE, '2024-10-25');
+
+
+CREATE TABLE crm_orders (
+    order_id SERIAL PRIMARY KEY,
+    account_id INT,
+    order_status VARCHAR(30),
+    order_value DECIMAL(10,2),
+    created_on DATE
+);
+
+
+INSERT INTO crm_orders (account_id, order_status, order_value, created_on) 
+VALUES
+(1, 'Pending', 1200.00, '2024-11-01'),
+(1, 'Completed', 800.00, '2024-11-15'),
+(2, 'Cancelled', NULL, '2024-11-20'),
+(3, NULL, 1500.00, '2024-11-25');
 ```
 
-### 2. Data Exploration & Cleaning
+### 2. Data Cleaning & Validation Queries: This section outlines the key SQL queries used to validate and clean data across the CRM system to ensure reliability and consistency.
 
-- **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
-
+- **Lead Completeness Check**: Identify leads with missing email, phone number, or status to flag incomplete records.
+- **Account-Link Consistency**: Detect crm_accounts entries linked to nonexistent lead_ids in the crm_leads table to ensure foreign key integrity.
+- **Industry Missing Check**: Flag customer accounts where the industry field is not recorded.
+- **Null Order Value Check**: Detect orders in crm_orders with a NULL order value for financial completeness.
+- **Missing Order Status Check**: Identify orders missing a valid order_status value.
+- **Orphan Accounts Check**: Find accounts in crm_accounts that have no associated orders, indicating low activity or potential data issues.
+- **Unlinked Leads Check**: Identify leads from crm_leads that have not been converted into accounts.
+- **Duplicate Lead Detection**: Search for duplicate email addresses in the leads table to avoid contact redundancies.
+  
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
+-- Find leads with missing email or phone--
 
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+SELECT *
+FROM crm_leads
+WHERE email IS NULL OR email=''
+OR phone IS NULL OR phone='';
 
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+--Find leads with missing or null status---
+
+SELECT *
+FROM crm_leads
+WHERE status IS NULL OR status='';
+
+--Check if all leads in crm_accounts exist in crm_leads---
+
+SELECT a.lead_id
+FROM crm_accounts AS a
+LEFT JOIN crm_leads as l 
+ON a.lead_id =l.lead_id
+WHERE l.lead_id IS NULL;
+
+--Find accounts missing industry info---
+
+SELECT *
+FROM crm_accounts
+WHERE industry IS NULL or industry='';
+
+--Detect orders with NULL order value--
+
+SELECT *
+FROM crm_orders
+WHERE order_value IS NULL;
+
+--Find orders with missing status--
+
+SELECT * 
+FROM crm_orders
+WHERE order_status IS NULL OR order_status = '';
+
+--Check for accounts without orders--
+
+SELECT a.account_id,a.account_name
+FROM crm_accounts as a
+LEFT JOIN crm_orders as o
+ON a.account_id=o.account_id
+WHERE o.account_id IS NULL;
+
+-- Check for leads without accounts--
+
+SELECT l.lead_id,l.first_name, l.last_name
+FROM crm_leads AS l
+LEFT JOIN crm_accounts AS a
+ON l.lead_id=a.lead_id
+WHERE a.lead_id IS NULL;
+
+
+--Validate duplicate emails in leads---
+
+SELECT email, COUNT(*)
+FROM crm_leads
+WHERE email IS NOT NULL AND email != ''
+GROUP BY email
+HAVING COUNT(*) > 1;
+
 ```
 
-### 3. Data Analysis & Findings
+### 3. Data Exploration Queries
 
 The following SQL queries were developed to answer specific business questions:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
-```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
-```
+-- count of leads per source--
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
-```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
-```
+SELECT source, COUNT (*) as lead_count
+FROM crm_leads
+GROUP BY source;
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
-```sql
-SELECT category, 
-       SUM(total_sale) AS total_sales
-FROM retail_sales
-GROUP BY category;
-```
+--Number of leads per status--
 
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
-```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
-```
+SELECT status, COUNT (*) as status_count
+FROM crm_leads
+GROUP BY status;
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
-```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
-```
+--Active vs inactive account breakdown--
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
-```sql
-SELECT category, 
-       gender, 
-       COUNT(transaction_id) AS total_transactions
-FROM retail_sales
-GROUP BY category, gender
-ORDER BY category, gender;
-```
+SELECT is_active, COUNT (*) 
+FROM crm_accounts
+GROUP BY is_active;
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
-```sql
-WITH monthly_avg_sales AS (
-  SELECT 
-    EXTRACT(YEAR FROM sale_date) AS year,
-    EXTRACT(MONTH FROM sale_date) AS month,
-    ROUND(AVG(total_sale), 2) AS avg_sale,
-    RANK() OVER (
-      PARTITION BY EXTRACT(YEAR FROM sale_date)
-      ORDER BY AVG(total_sale) DESC
-    ) AS sale_rank
-  FROM retail_sales
-  GROUP BY year, month
-)
+--Total order value per account---
 
-SELECT year, month, avg_sale
-FROM monthly_avg_sales
-WHERE sale_rank = 1;
-```
+SELECT a.account_name, SUM (o.order_value) AS total_order_value
+FROM crm_accounts AS a 
+JOIN crm_orders AS o
+ON a.account_id=o.account_id
+GROUP BY a.account_name;
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
-```sql
-SELECT customer_id, 
-       SUM(total_sale) AS total_sales
-FROM retail_sales
-GROUP BY customer_id
-ORDER BY total_sales DESC
-LIMIT 5;
-```
+--Leads converted to accounts with at least one order--
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
-```sql
-SELECT category, 
-       COUNT(DISTINCT customer_id) AS unique_customers
-FROM retail_sales
-GROUP BY category;
-```
+SELECT DISTINCT l.lead_id, l.first_name, l.last_name
+FROM crm_leads AS l
+JOIN crm_accounts AS a 
+ON l.lead_id = a.lead_id
+JOIN crm_orders AS o 
+ON a.account_id = o.account_id;
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
-```sql
-WITH shift_orders AS (
-  SELECT *,
-         CASE
-           WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-           WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-           ELSE 'Evening'
-         END AS shift
-  FROM retail_sales
-)
 
-SELECT shift, 
-       COUNT(*) AS total_orders
-FROM shift_orders
-GROUP BY shift
-ORDER BY shift;
+--Average order value by status where the order status or order value is not null--
+
+SELECT order_status, AVG(order_value) AS avg_order_value
+FROM crm_orders
+WHERE order_value IS NOT NULL AND order_status IS NOT NULL
+GROUP BY order_status;
+
 ```
 
 ## Findings
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+- **Incomplete Lead Records**: Some leads are missing key information such as email, phone number, or status, which can hinder effective follow-ups.
+- **Missing Industry and Order Details**: Certain accounts lack industry data, and some orders are missing values or statuses, pointing to potential data entry issues.
+- **Unlinked CRM Entities**: A few leads haven't been converted to accounts, and some accounts have no related orders, revealing breaks in the sales funnel.
+- **Lead Source & Status Distribution**: Most leads came from web forms, and the highest volume of leads are in the "Qualified" or "Contacted" status.
+- **Account Engagement Patterns**: Active accounts tend to have higher order activity, while inactive ones either lack engagement or require review for reactivation.
 
 ## Reports
 
@@ -194,12 +221,20 @@ ORDER BY shift;
 
 ## Conclusion
 
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
+This project demonstrates how SQL can be used effectively to:
+
+- Validate CRM data by identifying inconsistencies, null values, and relational mismatches.
+- Perform exploratory queries to extract business insights such as lead conversion trends and customer engagement.
+- Highlight critical areas for data quality improvement — a key requirement for accurate reporting, automation, and CRM optimization.
+
+These capabilities are vital for business analysts working with customer databases in CRM platforms like Dynamics 365, Salesforce, or HubSpot.
 
 
-## Author - Poornima V
+## Author - Shayistha
 
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
+This project is part of my business analyst portfolio and highlights my hands-on experience with SQL for CRM data validation and reporting. It reflects key skills in data quality analysis, troubleshooting relational inconsistencies, and extracting business insights using PostgreSQL.
+Feel free to reach out if you'd like to collaborate or provide feedback!
+https://www.linkedin.com/in/shayisthaa/
 
 Thank you for your support, and I look forward to connecting with you!
 
