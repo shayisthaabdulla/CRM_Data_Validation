@@ -8,6 +8,19 @@
 
 This project simulates a CRM (Customer Relationship Management) system inspired by Dynamics 365, designed to showcase SQL skills commonly used by Business Analysts. It focuses on data validation, cleaning, and insight generation from core CRM entities. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
 
+## Why This Project Matters
+
+This project simulates a real-world business scenario I encountered as a Business Analyst working with cross-functional teams. It reflects my hands-on experience with data validation, process improvement, and stakeholder collaboration.
+
+The project demonstrates:
+- My ability to analyze raw operational data for inconsistencies.
+- How I improve data quality in CRMs like Dynamics 365.
+- My practical SQL skills for data exploration, cleaning, and reporting.
+- My focus on improving team efficiency and reducing manual rework.
+
+This aligns directly with responsibilities I've had in previous roles and showcases my value as a data-driven decision-maker.
+
+
 ## Objectives
 
 1. **Set up a CRM database**: Create and populate a CRM database with sample data for leads, accounts, and orders.
