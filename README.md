@@ -90,20 +90,20 @@ VALUES
 - **Duplicate Lead Detection**: Search for duplicate email addresses in the leads table to avoid contact redundancies.
   
 ```sql
--- Find leads with missing email or phone--
+1. Write a SQL query to find leads with missing email or phone:
 
 SELECT *
 FROM crm_leads
 WHERE email IS NULL OR email=''
 OR phone IS NULL OR phone='';
 
---Find leads with missing or null status---
+2. Write a SQL query to find leads with missing or null status:
 
 SELECT *
 FROM crm_leads
 WHERE status IS NULL OR status='';
 
---Check if all leads in crm_accounts exist in crm_leads---
+3. Write a SQL query to check if all leads in crm_accounts exist in crm_leads:
 
 SELECT a.lead_id
 FROM crm_accounts AS a
@@ -111,25 +111,25 @@ LEFT JOIN crm_leads as l
 ON a.lead_id =l.lead_id
 WHERE l.lead_id IS NULL;
 
---Find accounts missing industry info---
+4. Write a SQL query to find accounts missing industry info:
 
 SELECT *
 FROM crm_accounts
 WHERE industry IS NULL or industry='';
 
---Detect orders with NULL order value--
+5. Write a SQL query to detect orders with NULL order value:
 
 SELECT *
 FROM crm_orders
 WHERE order_value IS NULL;
 
---Find orders with missing status--
+6. Write a SQL query to find orders with missing status:
 
 SELECT * 
 FROM crm_orders
 WHERE order_status IS NULL OR order_status = '';
 
---Check for accounts without orders--
+7. Write a SQL query to check for accounts without orders:
 
 SELECT a.account_id,a.account_name
 FROM crm_accounts as a
@@ -137,7 +137,7 @@ LEFT JOIN crm_orders as o
 ON a.account_id=o.account_id
 WHERE o.account_id IS NULL;
 
--- Check for leads without accounts--
+8. Write a SQL query to check for leads without accounts:
 
 SELECT l.lead_id,l.first_name, l.last_name
 FROM crm_leads AS l
@@ -146,7 +146,7 @@ ON l.lead_id=a.lead_id
 WHERE a.lead_id IS NULL;
 
 
---Validate duplicate emails in leads---
+9. Write a SQL query to validate duplicate emails in leads:
 
 SELECT email, COUNT(*)
 FROM crm_leads
@@ -161,25 +161,26 @@ HAVING COUNT(*) > 1;
 The following SQL queries were developed to answer specific business questions:
 
 ```sql
--- count of leads per source--
+
+1. Write a SQL query to count leads per source:
 
 SELECT source, COUNT (*) as lead_count
 FROM crm_leads
 GROUP BY source;
 
---Number of leads per status--
+2. Write a SQL query to find the number of leads per status:
 
 SELECT status, COUNT (*) as status_count
 FROM crm_leads
 GROUP BY status;
 
---Active vs inactive account breakdown--
+3. Write a SQL query to find active vs inactive account breakdown:
 
 SELECT is_active, COUNT (*) 
 FROM crm_accounts
 GROUP BY is_active;
 
---Total order value per account---
+4. Write a SQL query to find the total order value per account:
 
 SELECT a.account_name, SUM (o.order_value) AS total_order_value
 FROM crm_accounts AS a 
@@ -187,7 +188,7 @@ JOIN crm_orders AS o
 ON a.account_id=o.account_id
 GROUP BY a.account_name;
 
---Leads converted to accounts with at least one order--
+5. Write a SQL query to find the Leads converted to accounts with at least one order--
 
 SELECT DISTINCT l.lead_id, l.first_name, l.last_name
 FROM crm_leads AS l
@@ -197,7 +198,7 @@ JOIN crm_orders AS o
 ON a.account_id = o.account_id;
 
 
---Average order value by status where the order status or order value is not null--
+6. Write a SQL query to find the average order value by status where the order status or order value is not null:
 
 SELECT order_status, AVG(order_value) AS avg_order_value
 FROM crm_orders
@@ -216,9 +217,11 @@ GROUP BY order_status;
 
 ## Reports
 
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
+- **Lead Quality Report**: Summary of leads with missing contact details or status to flag incomplete or low-quality entries.
+- **Account Coverage Report**: Insights into how many leads were successfully converted into accounts and how many accounts are orphaned without orders.
+- **Order Summary Report**: Overview of total and average order values per account and per order status (e.g., Pending, Completed).
+- **Activity Breakdown**: Breakdown of active vs. inactive accounts and their associated sales activity, helping identify engagement gaps.
+- **Conversion Funnel**: Visualization of lead-to-account-to-order conversion path, highlighting potential drop-off points or CRM inefficiencies.
 
 ## Conclusion
 
