@@ -160,6 +160,7 @@ HAVING COUNT(*) > 1;
 
 The following SQL queries were developed to answer specific business questions:
 
+```sql
 -- count of leads per source--
 
 SELECT source, COUNT (*) as lead_count
